@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>学祭ARマスコット試作</title>
+  <title>学祭ARマスコット試作 / 反転ダンス版</title>
 
   <style>
     body {
@@ -135,11 +135,20 @@
         init: function () { this.t = this.data.delay; },
         tick: function (time, delta) {
           this.t += delta / 1000;
-          const bounce = Math.sin(this.t * 5) * 0.12;
-          const sway = Math.sin(this.t * 3) * 10;
-          const twist = Math.sin(this.t * 2.4) * 6;
-          this.el.setAttribute("position", this.el.dataset.baseX + " " + (0.05 + bounce) + " " + this.el.dataset.baseZ);
-          this.el.setAttribute("rotation", "0 " + sway + " " + twist);
+
+          // Generic energetic dance: side step + bounce + body swing + turn accent
+          const step = Math.sin(this.t * 3.2) * 0.10;
+          const bounce = Math.abs(Math.sin(this.t * 6.4)) * 0.16;
+          const sway = Math.sin(this.t * 3.2) * 18;
+          const twist = Math.sin(this.t * 4.1) * 9;
+          const nod = Math.sin(this.t * 6.4) * 5;
+
+          const baseX = parseFloat(this.el.dataset.baseX);
+          const baseZ = parseFloat(this.el.dataset.baseZ);
+
+          this.el.setAttribute("position", (baseX + step) + " " + (0.04 + bounce) + " " + baseZ);
+          // 180deg keeps the requested reversed facing direction.
+          this.el.setAttribute("rotation", nod + " " + (180 + sway) + " " + twist);
         }
       });
     `;
@@ -170,7 +179,7 @@
 
     function mascotHTML(x, z, shirtColor, skirtColor, nameText, delay, capColor) {
       return `
-        <a-entity mascot-dance="delay: ${delay}" data-base-x="${x}" data-base-z="${z}" scale="0.75 0.75 0.75">
+        <a-entity mascot-dance="delay: ${delay}" data-base-x="${x}" data-base-z="${z}" scale="0.75 0.75 0.75" rotation="0 180 0">
 
           <!-- shadow/base -->
           <a-circle position="0 0.01 0" rotation="-90 0 0" radius="0.62" color="#111827" opacity="0.22"></a-circle>
@@ -215,9 +224,9 @@
 
           <!-- arms dancing -->
           <a-cylinder position="-0.45 0.85 -0.02" rotation="0 0 55" radius="0.055" height="0.55" color="#8b5a2b"
-            animation="property: rotation; from: 0 0 55; to: 0 0 -18; dur: 520; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
+            animation="property: rotation; from: 0 0 78; to: 0 0 -38; dur: 360; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
           <a-cylinder position="0.45 0.85 -0.02" rotation="0 0 -55" radius="0.055" height="0.55" color="#8b5a2b"
-            animation="property: rotation; from: 0 0 -55; to: 0 0 18; dur: 520; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
+            animation="property: rotation; from: 0 0 -78; to: 0 0 38; dur: 360; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
 
           <!-- skirt/pants accent -->
           <a-cylinder position="0 0.38 -0.01" radius="0.36" height="0.24" color="${skirtColor}"></a-cylinder>
@@ -245,7 +254,7 @@
 
         document.getElementById("arContainer").innerHTML = `
           <div class="top">
-            <div class="badge">学祭ARマスコット試作</div>
+            <div class="badge">学祭ARマスコット試作 / 反転ダンス版</div>
             <a class="marker-link" href="./marker.png" target="_blank" rel="noopener">マーカー表示</a>
           </div>
 
@@ -288,7 +297,7 @@
     <div class="card">
       <h1>学祭AR<br>マスコット試作</h1>
       <p>
-        写真のマスコットを参考にした、簡易3Dデフォルメ版です。<br>
+        向きを反転し、動きを強めた簡易3Dデフォルメ版です。<br>
         「AR開始」を押して、カメラ・モーションを許可してください。
       </p>
       <button id="startBtn">AR開始</button>
