@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>学祭ARマスコット試作 / 反転ダンス版</title>
+  <title>学祭ARマスコット試作 / 青丸なし版</title>
 
   <style>
     body {
@@ -254,7 +254,7 @@
 
         document.getElementById("arContainer").innerHTML = `
           <div class="top">
-            <div class="badge">学祭ARマスコット試作 / 反転ダンス版</div>
+            <div class="badge">学祭ARマスコット試作 / 青丸なし版</div>
             <a class="marker-link" href="./marker.png" target="_blank" rel="noopener">マーカー表示</a>
           </div>
 
@@ -270,7 +270,6 @@
             vr-mode-ui="enabled: false">
 
             <a-marker type="pattern" url="./marker.patt" smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
-              <a-circle position="0 0 0" rotation="-90 0 0" radius="1.35" color="#38bdf8" opacity="0.20"></a-circle>
               ${mascotHTML("-0.47", "0", "#ef4444", "#dc2626", "NUSS", "0", "#f59e0b")}
               ${mascotHTML("0.47", "0", "#38bdf8", "#60a5fa", "AR", "0.6", "#2563eb")}
               <a-text value="Welcome to Nihon Univ!" position="0 1.8 0" rotation="-25 0 0" align="center" color="#ffffff" width="4.2"></a-text>
@@ -297,7 +296,7 @@
     <div class="card">
       <h1>学祭AR<br>マスコット試作</h1>
       <p>
-        向きを反転し、動きを強めた簡易3Dデフォルメ版です。<br>
+        青い円を消した、反転ダンス版です。<br>
         「AR開始」を押して、カメラ・モーションを許可してください。
       </p>
       <button id="startBtn">AR開始</button>
