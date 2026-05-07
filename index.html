@@ -113,7 +113,7 @@
     <div class="badge">学祭ARダンス試作 / Marker AR</div>
     <a
       class="marker-link"
-      href="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/HIRO.jpg"
+      href="./marker.png"
       target="_blank"
       rel="noopener"
     >マーカー表示</a>
@@ -121,7 +121,7 @@
 
   <div class="hud">
     <strong>使い方：</strong>
-    右上の「マーカー表示」を別端末・別画面・印刷で開く → このカメラをマーカーに向ける → マーカー上に3Dキャラが出ます。
+    右上の「マーカー表示」を別端末・別画面・印刷で開く → このカメラを日本大学マーカーに向ける → マーカー上に3Dキャラが出ます。
   </div>
 
   <a-scene
@@ -130,8 +130,8 @@
     renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;"
     vr-mode-ui="enabled: false">
 
-    <!-- Hiroマーカーを認識したら、この中の3Dが表示される -->
-    <a-marker preset="hiro">
+    <!-- 日本大学オリジナルマーカーを認識したら、この中の3Dが表示される -->
+    <a-marker type="pattern" url="./marker.patt">
 
       <!-- 床っぽい円 -->
       <a-circle
