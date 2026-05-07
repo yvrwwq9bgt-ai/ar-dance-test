@@ -3,166 +3,39 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>学祭ARマスコット試作 - リアル寄せv2</title>
-
+  <title>学祭ARマスコット - 写真正面版</title>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #000;
-      color: white;
-    }
-
-    #startScreen {
-      position: fixed;
-      z-index: 9999;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      background:
-        radial-gradient(circle at top left, #2563eb 0, transparent 35%),
-        radial-gradient(circle at bottom right, #dc2626 0, transparent 35%),
-        #020617;
-    }
-
-    .card {
-      width: min(560px, 100%);
-      padding: 24px;
-      border-radius: 28px;
-      background: rgba(15, 23, 42, .82);
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 24px 80px rgba(0,0,0,.35);
-      text-align: center;
-    }
-
-    h1 {
-      margin: 0 0 12px;
-      font-size: clamp(28px, 7vw, 44px);
-      letter-spacing: -.04em;
-      line-height: 1.05;
-    }
-
-    p {
-      margin: 0 0 18px;
-      color: #cbd5e1;
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
-    #startBtn {
-      width: 100%;
-      border: 0;
-      border-radius: 18px;
-      padding: 16px 18px;
-      font-weight: 900;
-      font-size: 17px;
-      background: #f8fafc;
-      color: #0f172a;
-      cursor: pointer;
-    }
-
-    .mini {
-      margin-top: 12px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .hud {
-      position: fixed;
-      z-index: 10;
-      left: 12px;
-      right: 12px;
-      bottom: 12px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      color: white;
-      background: rgba(15, 23, 42, .72);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(12px);
-      line-height: 1.55;
-      font-size: 14px;
-    }
-
-    .hud strong { color: #7dd3fc; }
-
-    .top {
-      position: fixed;
-      z-index: 10;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-
-    .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      color: white;
-      background: rgba(15, 23, 42, .72);
-      border: 1px solid rgba(255,255,255,.18);
-      backdrop-filter: blur(12px);
-      font-size: 13px;
-    }
-
-    a.marker-link {
-      pointer-events: auto;
-      color: #0f172a;
-      background: #f8fafc;
-      font-weight: 800;
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-    }
-
-    #arContainer {
-      display: none;
-      position: fixed;
-      inset: 0;
-    }
+    body { margin:0; overflow:hidden; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#000; color:white; }
+    #startScreen { position:fixed; z-index:9999; inset:0; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at top left,#2563eb 0,transparent 35%),radial-gradient(circle at bottom right,#dc2626 0,transparent 35%),#020617; }
+    .card { width:min(560px,100%); padding:24px; border-radius:28px; background:rgba(15,23,42,.82); border:1px solid rgba(255,255,255,.18); box-shadow:0 24px 80px rgba(0,0,0,.35); text-align:center; }
+    h1 { margin:0 0 12px; font-size:clamp(28px,7vw,44px); letter-spacing:-.04em; line-height:1.05; }
+    p { margin:0 0 18px; color:#cbd5e1; line-height:1.7; font-size:15px; }
+    #startBtn { width:100%; border:0; border-radius:18px; padding:16px 18px; font-weight:900; font-size:17px; background:#f8fafc; color:#0f172a; cursor:pointer; }
+    .mini { margin-top:12px; font-size:12px; color:#94a3b8; }
+    .hud { position:fixed; z-index:10; left:12px; right:12px; bottom:12px; padding:14px 16px; border-radius:18px; color:white; background:rgba(15,23,42,.72); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(12px); line-height:1.55; font-size:14px; }
+    .hud strong { color:#7dd3fc; }
+    .top { position:fixed; z-index:10; top:12px; left:12px; right:12px; display:flex; gap:8px; align-items:center; justify-content:space-between; pointer-events:none; }
+    .badge { padding:8px 12px; border-radius:999px; color:white; background:rgba(15,23,42,.72); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(12px); font-size:13px; }
+    a.marker-link { pointer-events:auto; color:#0f172a; background:#f8fafc; font-weight:800; text-decoration:none; padding:8px 12px; border-radius:999px; font-size:13px; }
+    #arContainer { display:none; position:fixed; inset:0; }
   </style>
-
   <script>
     const AFRAME_COMPONENT_CODE = `
-      AFRAME.registerComponent("mascot-dance", {
-        schema: { delay: { type: "number", default: 0 } },
-        init: function () { this.t = this.data.delay; },
+      AFRAME.registerComponent("photo-mascot-dance", {
+        init: function () { this.t = 0; },
         tick: function (time, delta) {
           this.t += delta / 1000;
-
-          const step = Math.sin(this.t * 3.0) * 0.075;
-          const bounce = Math.abs(Math.sin(this.t * 5.8)) * 0.095;
-          const sway = Math.sin(this.t * 2.8) * 10;
-          const twist = Math.sin(this.t * 3.6) * 4;
-          const nod = Math.sin(this.t * 5.8) * 2.5;
-
-          const baseX = parseFloat(this.el.dataset.baseX);
-          const baseZ = parseFloat(this.el.dataset.baseZ);
-
-          this.el.setAttribute("position", (baseX + step) + " " + (0.02 + bounce) + " " + baseZ);
-          this.el.setAttribute("rotation", nod + " " + (180 + sway) + " " + twist);
+          const bounce = Math.sin(this.t * 3.2) * 0.045;
+          const sway = Math.sin(this.t * 2.0) * 1.7;
+          this.el.setAttribute("position", "0 " + (0.92 + bounce) + " 0");
+          this.el.setAttribute("rotation", "0 " + (180 + sway) + " 0");
         }
       });
     `;
 
     async function requestIOSPermissions() {
-      try {
-        if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") {
-          await DeviceMotionEvent.requestPermission();
-        }
-      } catch (e) {}
-
-      try {
-        if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-          await DeviceOrientationEvent.requestPermission();
-        }
-      } catch (e) {}
+      try { if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") await DeviceMotionEvent.requestPermission(); } catch(e) {}
+      try { if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") await DeviceOrientationEvent.requestPermission(); } catch(e) {}
     }
 
     function loadScript(src) {
@@ -175,135 +48,42 @@
       });
     }
 
-    function mascotHTML(x, z, outfit, lower, label, delay, capColor, capTop, faceScale, name) {
-      return `
-        <a-entity mascot-dance="delay: ${delay}" data-base-x="${x}" data-base-z="${z}" scale="0.72 0.72 0.72">
-
-          <!-- subtle foot shadows -->
-          <a-circle position="-0.14 0.012 -0.03" rotation="-90 0 0" radius="0.20" color="#0f172a" opacity="0.18"></a-circle>
-          <a-circle position="0.14 0.012 -0.03" rotation="-90 0 0" radius="0.20" color="#0f172a" opacity="0.18"></a-circle>
-
-          <!-- short mascot legs -->
-          <a-cylinder position="-0.16 0.17 0.02" radius="0.075" height="0.34" color="#7b461f" roughness="0.85"></a-cylinder>
-          <a-cylinder position="0.16 0.17 0.02" radius="0.075" height="0.34" color="#7b461f" roughness="0.85"></a-cylinder>
-
-          <!-- feet -->
-          <a-sphere position="-0.16 0.03 -0.06" radius="0.095" color="#6b3d1c" scale="1.35 0.45 0.9"></a-sphere>
-          <a-sphere position="0.16 0.03 -0.06" radius="0.095" color="#6b3d1c" scale="1.35 0.45 0.9"></a-sphere>
-
-          <!-- rounded costume body -->
-          <a-sphere position="0 0.62 0" radius="0.42" color="${outfit}" scale="1.03 1.22 0.86" roughness="0.55" metalness="0"></a-sphere>
-
-          <!-- lower wear / skirt pants -->
-          <a-sphere position="0 0.36 -0.015" radius="0.36" color="${lower}" scale="1.12 0.55 0.88" roughness="0.65"></a-sphere>
-
-          <!-- brown upper body layer -->
-          <a-sphere position="0 0.91 0.02" radius="0.35" color="#855020" scale="1.23 0.86 0.78" roughness="0.9"></a-sphere>
-
-          <!-- belly patch -->
-          <a-sphere position="0 0.66 -0.335" radius="0.235" color="#f1dcc2" scale="1.38 0.82 0.34" roughness="0.75"></a-sphere>
-
-          <!-- chest label plate -->
-          <a-plane position="0 0.79 -0.438" rotation="-14 0 0" width="0.34" height="0.19" color="#f8fafc"></a-plane>
-          <a-text value="${label}" position="0 0.805 -0.444" rotation="-14 0 0" align="center" color="#ef4444" width="1.0"></a-text>
-
-          <!-- large mascot head -->
-          <a-sphere position="0 1.24 0.02" radius="0.43" color="#8b5727" scale="1.04 1.02 0.94" roughness="0.88"></a-sphere>
-
-          <!-- forehead/facial beige panel, wide and forward -->
-          <a-sphere position="0 1.16 -0.335" radius="0.315" color="#f1dcc2" scale="${faceScale} 0.86 0.42" roughness="0.78"></a-sphere>
-
-          <!-- lower muzzle protrusion -->
-          <a-sphere position="0 1.04 -0.47" radius="0.22" color="#f3dfc6" scale="1.55 0.74 0.48" roughness="0.78"></a-sphere>
-
-          <!-- nose, glossy -->
-          <a-sphere position="0 1.105 -0.635" radius="0.046" color="#0f172a" roughness="0.25" metalness="0.1"></a-sphere>
-
-          <!-- mouth tiny -->
-          <a-torus position="0 1.015 -0.628" rotation="90 0 0" radius="0.035" radius-tubular="0.005" color="#1f2937" scale="1.0 0.55 1.0"></a-torus>
-
-          <!-- eyes white + pupils -->
-          <a-sphere position="-0.145 1.305 -0.36" radius="0.052" color="#ffffff" scale="0.85 1.35 0.58"></a-sphere>
-          <a-sphere position="0.145 1.305 -0.36" radius="0.052" color="#ffffff" scale="0.85 1.35 0.58"></a-sphere>
-          <a-sphere position="-0.145 1.30 -0.405" radius="0.022" color="#111827" scale="0.8 1.25 0.55"></a-sphere>
-          <a-sphere position="0.145 1.30 -0.405" radius="0.022" color="#111827" scale="0.8 1.25 0.55"></a-sphere>
-
-          <!-- eyebrows -->
-          <a-box position="-0.145 1.385 -0.39" rotation="0 0 -10" width="0.12" height="0.018" depth="0.018" color="#3b2413"></a-box>
-          <a-box position="0.145 1.385 -0.39" rotation="0 0 10" width="0.12" height="0.018" depth="0.018" color="#3b2413"></a-box>
-
-          <!-- ears -->
-          <a-sphere position="-0.34 1.33 -0.02" radius="0.125" color="#744118" scale="0.72 1.12 0.42" rotation="0 0 -12"></a-sphere>
-          <a-sphere position="0.34 1.33 -0.02" radius="0.125" color="#744118" scale="0.72 1.12 0.42" rotation="0 0 12"></a-sphere>
-
-          <!-- horns -->
-          <a-cone position="-0.19 1.58 0.01" rotation="0 0 12" radius-bottom="0.062" radius-top="0.005" height="0.20" color="#e9d9bd" roughness="0.7"></a-cone>
-          <a-cone position="0.19 1.58 0.01" rotation="0 0 -12" radius-bottom="0.062" radius-top="0.005" height="0.20" color="#e9d9bd" roughness="0.7"></a-cone>
-
-          <!-- cap, more like mascot hat -->
-          <a-sphere position="0 1.565 -0.04" radius="0.245" color="${capColor}" scale="1.12 0.32 0.88" roughness="0.45"></a-sphere>
-          <a-sphere position="0.075 1.61 -0.055" radius="0.135" color="${capTop}" scale="1.1 0.32 0.85" roughness="0.42"></a-sphere>
-          <a-sphere position="0.215 1.53 -0.12" radius="0.09" color="${capColor}" scale="1.45 0.18 0.52" rotation="0 0 -8"></a-sphere>
-
-          <!-- short thick arms with dance motion -->
-          <a-cylinder position="-0.45 0.84 -0.02" rotation="0 0 70" radius="0.07" height="0.52" color="#7b461f"
-            animation="property: rotation; from: 0 0 70; to: 0 0 -28; dur: 390; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
-          <a-sphere position="-0.63 1.02 -0.04" radius="0.09" color="#7b461f"
-            animation="property: position; from: -0.63 1.02 -0.04; to: -0.58 0.72 -0.04; dur: 390; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
-
-          <a-cylinder position="0.45 0.84 -0.02" rotation="0 0 -70" radius="0.07" height="0.52" color="#7b461f"
-            animation="property: rotation; from: 0 0 -70; to: 0 0 28; dur: 390; dir: alternate; loop: true; easing: easeInOutSine"></a-cylinder>
-          <a-sphere position="0.63 1.02 -0.04" radius="0.09" color="#7b461f"
-            animation="property: position; from: 0.63 1.02 -0.04; to: 0.58 0.72 -0.04; dur: 390; dir: alternate; loop: true; easing: easeInOutSine"></a-sphere>
-
-          <!-- tiny name on body -->
-          <a-text value="${name}" position="0 0.52 -0.45" rotation="-16 0 0" align="center" color="#ffffff" width="1.35"></a-text>
-        </a-entity>
-      `;
-    }
-
     async function startAR() {
       const btn = document.getElementById("startBtn");
       btn.textContent = "起動中...";
       btn.disabled = true;
-
       await requestIOSPermissions();
 
       try {
         await loadScript("https://aframe.io/releases/1.5.0/aframe.min.js");
         await loadScript("https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.7/aframe/build/aframe-ar.js");
         eval(AFRAME_COMPONENT_CODE);
-
         document.getElementById("startScreen").style.display = "none";
         document.getElementById("arContainer").style.display = "block";
-
         document.getElementById("arContainer").innerHTML = `
           <div class="top">
-            <div class="badge">学祭ARマスコット試作 / リアル寄せv2</div>
+            <div class="badge">学祭ARマスコット / 写真正面版</div>
             <a class="marker-link" href="./marker.png" target="_blank" rel="noopener">マーカー表示</a>
           </div>
-
           <div class="hud">
             <strong>使い方：</strong>
-            別端末・PC・印刷で「マーカー表示」を開く → カメラを太い黒枠マーカー全体に向ける → マスコットが出ます。
+            別端末・PC・印刷で「マーカー表示」を開く → カメラを太い黒枠マーカー全体に向ける → 写真のマスコットが正面に出ます。
           </div>
-
-          <a-scene
-            embedded
-            arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;"
-            renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true; physicallyCorrectLights: true;"
-            vr-mode-ui="enabled: false">
-
-            <a-assets></a-assets>
-
+          <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;" renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;" vr-mode-ui="enabled: false">
+            <a-assets>
+              <img id="mascotFront" src="./mascot_front.png">
+            </a-assets>
             <a-marker type="pattern" url="./marker.patt" smooth="true" smoothCount="6" smoothTolerance="0.01" smoothThreshold="2">
-              <a-entity light="type: ambient; intensity: 1.15"></a-entity>
-              <a-entity light="type: directional; intensity: 0.85" position="0 2 1"></a-entity>
-
-              ${mascotHTML("-0.48", "0", "#e3342f", "#c81e1e", "NUSS", "0", "#f59e0b", "#f97316", "1.42", "NUSS")}
-              ${mascotHTML("0.48", "0", "#38bdf8", "#60a5fa", "NU", "0.55", "#2563eb", "#3b82f6", "1.30", "DANCE")}
+              <a-entity photo-mascot-dance>
+                <a-plane
+                  src="#mascotFront"
+                  position="0 0 0"
+                  width="1.7"
+                  height="1.7"
+                  material="transparent: true; alphaTest: 0.08; side: double; shader: flat">
+                </a-plane>
+              </a-entity>
             </a-marker>
-
             <a-entity camera></a-entity>
           </a-scene>
         `;
@@ -313,26 +93,18 @@
         alert("ARの起動に失敗しました。Safari/Chromeで開いているか、通信環境を確認してください。");
       }
     }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("startBtn").addEventListener("click", startAR);
-    });
+    window.addEventListener("DOMContentLoaded", () => document.getElementById("startBtn").addEventListener("click", startAR));
   </script>
 </head>
-
 <body>
   <div id="startScreen">
     <div class="card">
-      <h1>学祭AR<br>マスコット試作</h1>
-      <p>
-        写真の着ぐるみ感に寄せた、リアル寄せv2です。<br>
-        「AR開始」を押して、カメラ・モーションを許可してください。
-      </p>
+      <h1>学祭AR<br>マスコット</h1>
+      <p>正面から見たときに写真に一番近くなる版です。<br>「AR開始」を押して、カメラ・モーションを許可してください。</p>
       <button id="startBtn">AR開始</button>
       <div class="mini">iPhoneはSafari、AndroidはChrome推奨</div>
     </div>
   </div>
-
   <div id="arContainer"></div>
 </body>
 </html>
