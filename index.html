@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>学祭ARマスコット - 写真正面版</title>
+  <title>学祭ARマスコット - サイズ調整版</title>
   <style>
     body { margin:0; overflow:hidden; font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; background:#000; color:white; }
     #startScreen { position:fixed; z-index:9999; inset:0; display:grid; place-items:center; padding:24px; background:radial-gradient(circle at top left,#2563eb 0,transparent 35%),radial-gradient(circle at bottom right,#dc2626 0,transparent 35%),#020617; }
@@ -12,14 +12,70 @@
     p { margin:0 0 18px; color:#cbd5e1; line-height:1.7; font-size:15px; }
     #startBtn { width:100%; border:0; border-radius:18px; padding:16px 18px; font-weight:900; font-size:17px; background:#f8fafc; color:#0f172a; cursor:pointer; }
     .mini { margin-top:12px; font-size:12px; color:#94a3b8; }
+
     .hud { position:fixed; z-index:10; left:12px; right:12px; bottom:12px; padding:14px 16px; border-radius:18px; color:white; background:rgba(15,23,42,.72); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(12px); line-height:1.55; font-size:14px; }
     .hud strong { color:#7dd3fc; }
+
     .top { position:fixed; z-index:10; top:12px; left:12px; right:12px; display:flex; gap:8px; align-items:center; justify-content:space-between; pointer-events:none; }
     .badge { padding:8px 12px; border-radius:999px; color:white; background:rgba(15,23,42,.72); border:1px solid rgba(255,255,255,.18); backdrop-filter:blur(12px); font-size:13px; }
     a.marker-link { pointer-events:auto; color:#0f172a; background:#f8fafc; font-weight:800; text-decoration:none; padding:8px 12px; border-radius:999px; font-size:13px; }
+
+    #sizePanel {
+      position: fixed;
+      z-index: 20;
+      left: 12px;
+      right: 12px;
+      bottom: 112px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, .78);
+      border: 1px solid rgba(255,255,255,.18);
+      backdrop-filter: blur(12px);
+      color: white;
+    }
+
+    .sizeRow {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    #sizeSlider {
+      width: 100%;
+      accent-color: #38bdf8;
+    }
+
+    #sizeValue {
+      min-width: 52px;
+      text-align: right;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    .buttonRow {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .miniBtn {
+      flex: 1;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 12px;
+      padding: 9px 10px;
+      color: white;
+      background: rgba(255,255,255,.10);
+      font-weight: 800;
+    }
+
     #arContainer { display:none; position:fixed; inset:0; }
   </style>
   <script>
+    let mascotScale = 1.70;
+
     const AFRAME_COMPONENT_CODE = `
       AFRAME.registerComponent("photo-mascot-dance", {
         init: function () { this.t = 0; },
@@ -32,6 +88,19 @@
         }
       });
     `;
+
+    function updateMascotSize(value) {
+      mascotScale = Number(value);
+      const plane = document.getElementById("mascotPlane");
+      const label = document.getElementById("sizeValue");
+      if (plane) {
+        plane.setAttribute("width", mascotScale);
+        plane.setAttribute("height", mascotScale);
+      }
+      if (label) {
+        label.textContent = mascotScale.toFixed(2) + "x";
+      }
+    }
 
     async function requestIOSPermissions() {
       try { if (typeof DeviceMotionEvent !== "undefined" && typeof DeviceMotionEvent.requestPermission === "function") await DeviceMotionEvent.requestPermission(); } catch(e) {}
@@ -62,13 +131,28 @@
         document.getElementById("arContainer").style.display = "block";
         document.getElementById("arContainer").innerHTML = `
           <div class="top">
-            <div class="badge">学祭ARマスコット / 写真正面版</div>
+            <div class="badge">学祭ARマスコット / サイズ調整版</div>
             <a class="marker-link" href="./marker.png" target="_blank" rel="noopener">マーカー表示</a>
           </div>
+
+          <div id="sizePanel">
+            <div class="sizeRow">
+              <span>小</span>
+              <input id="sizeSlider" type="range" min="0.8" max="3.2" step="0.05" value="1.70">
+              <span id="sizeValue">1.70x</span>
+            </div>
+            <div class="buttonRow">
+              <button class="miniBtn" onclick="updateMascotSize(1.2); document.getElementById('sizeSlider').value=1.2;">小さめ</button>
+              <button class="miniBtn" onclick="updateMascotSize(1.7); document.getElementById('sizeSlider').value=1.7;">標準</button>
+              <button class="miniBtn" onclick="updateMascotSize(2.4); document.getElementById('sizeSlider').value=2.4;">大きめ</button>
+            </div>
+          </div>
+
           <div class="hud">
             <strong>使い方：</strong>
-            別端末・PC・印刷で「マーカー表示」を開く → カメラを太い黒枠マーカー全体に向ける → 写真のマスコットが正面に出ます。
+            マーカーに向けたまま、上のスライダーでマスコットの大きさを調整できます。
           </div>
+
           <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;" renderer="logarithmicDepthBuffer: true; antialias: true; alpha: true;" vr-mode-ui="enabled: false">
             <a-assets>
               <img id="mascotFront" src="./mascot_front.png">
@@ -76,6 +160,7 @@
             <a-marker type="pattern" url="./marker.patt" smooth="true" smoothCount="6" smoothTolerance="0.01" smoothThreshold="2">
               <a-entity photo-mascot-dance>
                 <a-plane
+                  id="mascotPlane"
                   src="#mascotFront"
                   position="0 0 0"
                   width="1.7"
@@ -87,6 +172,8 @@
             <a-entity camera></a-entity>
           </a-scene>
         `;
+
+        document.getElementById("sizeSlider").addEventListener("input", (e) => updateMascotSize(e.target.value));
       } catch (e) {
         btn.disabled = false;
         btn.textContent = "AR開始";
@@ -100,7 +187,7 @@
   <div id="startScreen">
     <div class="card">
       <h1>学祭AR<br>マスコット</h1>
-      <p>正面から見たときに写真に一番近くなる版です。<br>「AR開始」を押して、カメラ・モーションを許可してください。</p>
+      <p>サイズをスマホ上で変えられる版です。<br>「AR開始」を押して、カメラ・モーションを許可してください。</p>
       <button id="startBtn">AR開始</button>
       <div class="mini">iPhoneはSafari、AndroidはChrome推奨</div>
     </div>
